@@ -1,0 +1,15 @@
+# def prime(n):
+#     x=1
+#     for in range(2,n):
+#         if x%i ==0:
+#             x=0
+#             break
+#         else:
+#             x=1
+#     return x 
+
+lst = [23,45,22,78,36,12]
+lst1 = list(filter(lambda x:x%2==0,lst))
+print(lst1)
+
+    
