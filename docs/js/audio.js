@@ -1,6 +1,8 @@
 /* =========================================================
    audio.js — tiny WebAudio engine
-   - "Happy Birthday" melody (synth, loops gently)
+   - Background: if docs/music/song.mp3 (or similar) exists,
+     that MP3 plays (loop). Otherwise a soft original
+     romantic instrumental (flute-style synth) plays.
    - SFX: balloon pop, whoosh, sparkle chime, ding
    ========================================================= */
 (function () {
@@ -12,6 +14,37 @@
   var musicOn = true;
   var musicTimer = null;
   var musicStarted = false;
+
+  /* ---------------- optional MP3 support ---------------- */
+
+  var MP3_CANDIDATES = [
+    'music/song.mp3',
+    'music/music.mp3',
+    'music/o-sanam.mp3',
+    'music/osanam.mp3'
+  ];
+  var mp3El = null;
+  var mp3Active = false;
+
+  (function findMp3() {
+    var i = 0;
+    (function tryNext() {
+      if (i >= MP3_CANDIDATES.length) return;
+      var url = MP3_CANDIDATES[i++];
+      fetch(url, { method: 'HEAD' }).then(function (r) {
+        if (r.ok) {
+          mp3El = document.createElement('audio');
+          mp3El.src = url;
+          mp3El.loop = true;
+          mp3El.preload = 'auto';
+          mp3El.volume = 0.55;
+          mp3Active = true;
+        } else {
+          tryNext();
+        }
+      }).catch(tryNext);
+    })();
+  })();
 
   function ensureCtx() {
     if (!ctx) {
@@ -29,79 +62,106 @@
     return ctx;
   }
 
-  /* ---------------- music: happy birthday ---------------- */
+  /* ---------------- romantic instrumental (original) ---------------- */
 
   var N = {
-    G4: 392.00, A4: 440.00, B4: 493.88, C5: 523.25, D5: 587.33,
-    E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.00
+    A3: 220.00, B3: 246.94, C4: 261.63, D4: 293.66, E4: 329.63,
+    F4: 349.23, G4: 392.00, A4: 440.00, C5: 523.25, G5: 783.99, A5: 880.00
   };
-  // [freq, beats]  (beat = 0.46s)
+  // gentle dreamy lead, [freq, beats] — 4 x 8-beat bars
   var MELODY = [
-    [N.G4, 0.75], [N.G4, 0.25], [N.A4, 1], [N.G4, 1], [N.C5, 1], [N.B4, 2], [0, 1],
-    [N.G4, 0.75], [N.G4, 0.25], [N.A4, 1], [N.G4, 1], [N.D5, 1], [N.C5, 2], [0, 1],
-    [N.G4, 0.75], [N.G4, 0.25], [N.G5, 1], [N.E5, 1], [N.C5, 1], [N.B4, 1], [N.A4, 3], [0, 1],
-    [N.F5, 0.75], [N.F5, 0.25], [N.E5, 1], [N.C5, 1], [N.D5, 1], [N.C5, 3], [0, 2]
+    [N.E4, 1], [N.G4, 1], [N.A4, 1.5], [N.G4, 0.5], [N.E4, 1], [N.D4, 1], [N.C4, 2],
+    [N.D4, 1], [N.E4, 1], [N.F4, 1.5], [N.E4, 0.5], [N.D4, 1], [N.C4, 1], [N.A3, 2],
+    [N.C4, 1], [N.D4, 1], [N.E4, 1.5], [N.D4, 0.5], [N.E4, 1], [N.G4, 1], [N.E4, 2],
+    [N.D4, 1], [N.C4, 1.5], [N.B3, 0.5], [N.A3, 1], [N.C4, 1], [N.D4, 2], [0, 2]
   ];
-  var BEAT = 0.46;
+  // soft backing pads, one chord per bar (8 beats)
+  var CHORDS = [
+    [220.00, 261.63, 329.63],  // Am
+    [174.61, 220.00, 261.63],  // F
+    [261.63, 329.63, 392.00],  // C
+    [196.00, 246.94, 293.66]   // G
+  ];
+  var BEAT = 0.8;
 
   function note(freq, start, dur, dest, gainVal, type) {
     var o = ctx.createOscillator();
     var g = ctx.createGain();
-    o.type = type || 'triangle';
+    o.type = type || 'sine';
     o.frequency.value = freq;
     g.gain.setValueAtTime(0.0001, start);
-    g.gain.linearRampToValueAtTime(gainVal, start + 0.04);
-    g.gain.exponentialRampToValueAtTime(0.0001, start + dur * 0.92);
+    g.gain.linearRampToValueAtTime(gainVal, start + 0.07);
+    g.gain.setValueAtTime(gainVal, start + dur * 0.55);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur * 0.98);
     o.connect(g);
     g.connect(dest);
     o.start(start);
-    o.stop(start + dur + 0.05);
+    o.stop(start + dur + 0.1);
   }
 
   function padChord(freqs, start, dur) {
     freqs.forEach(function (f) {
-      note(f, start, dur, musicGain, 0.028, 'sine');
+      note(f, start, dur, musicGain, 0.03, 'sine');
     });
   }
 
   function scheduleMelody() {
     var t = ctx.currentTime + 0.1;
     var total = 0;
-    MELODY.forEach(function (m, i) {
-      var f = m[0], b = m[1], d = b * BEAT;
+    MELODY.forEach(function (m) {
+      var f = m[0], d = m[1] * BEAT;
       if (f > 0) {
-        note(f, t + total, d * 1.05, musicGain, 0.16, 'triangle');
-        note(f * 2, t + total, d * 0.9, musicGain, 0.045, 'sine'); // shimmer
+        note(f, t + total, d * 1.08, musicGain, 0.16, 'sine');
+        note(f * 2, t + total, d * 0.9, musicGain, 0.028, 'triangle'); // airy shimmer
       }
       total += d;
     });
-    // soft backing: C - G - Am - F-ish pads
-    padChord([261.63, 329.63, 392.00], t, total * 0.5);
-    padChord([196.00, 246.94, 392.00], t + total * 0.5, total * 0.5);
-    var loopMs = (total + 2.2) * 1000;
+    CHORDS.forEach(function (chord, i) {
+      padChord(chord, t + i * 8 * BEAT, 8 * BEAT);
+    });
+    var loopMs = (total + 2.5) * 1000;
     musicTimer = setTimeout(scheduleMelody, loopMs);
     return loopMs;
   }
 
+  function synthStart() {
+    if (!ctx) return;
+    musicGain.gain.cancelScheduledValues(ctx.currentTime);
+    musicGain.gain.linearRampToValueAtTime(0.9, ctx.currentTime + 1.6);
+    scheduleMelody();
+  }
+
   function startMusic() {
-    var c = ensureCtx();
-    if (!c || musicStarted) return;
+    if (musicStarted) return;
     musicStarted = true;
-    if (musicOn) {
-      musicGain.gain.cancelScheduledValues(c.currentTime);
-      musicGain.gain.linearRampToValueAtTime(0.85, c.currentTime + 1.4);
-      scheduleMelody();
+    if (mp3Active && mp3El) {
+      if (musicOn) {
+        var p = mp3El.play();
+        if (p && p.catch) p.catch(synthStart);
+      }
+      return;
     }
+    ensureCtx();
+    if (musicOn) synthStart();
   }
 
   function setMusic(on) {
     musicOn = on;
+    if (musicStarted && mp3Active && mp3El) {
+      if (on) {
+        var p = mp3El.play();
+        if (p && p.catch) p.catch(function () {});
+      } else {
+        mp3El.pause();
+      }
+      return;
+    }
     var c = ensureCtx();
     if (!c) return;
     if (on && !musicStarted) { startMusic(); return; }
     if (on) {
       musicGain.gain.cancelScheduledValues(c.currentTime);
-      musicGain.gain.linearRampToValueAtTime(0.85, c.currentTime + 0.8);
+      musicGain.gain.linearRampToValueAtTime(0.9, c.currentTime + 0.8);
       if (!musicTimer) scheduleMelody();
     } else if (musicStarted) {
       musicGain.gain.cancelScheduledValues(c.currentTime);
@@ -123,7 +183,6 @@
     var c = ensureCtx();
     if (!c) return;
     var t = c.currentTime;
-    // short noise burst
     var len = 0.07;
     var buf = ctx.createBuffer(1, ctx.sampleRate * len, ctx.sampleRate);
     var d = buf.getChannelData(0);

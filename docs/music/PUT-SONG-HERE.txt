@@ -1,0 +1,20 @@
+IS FOLDER ME APNA MP3 DAALO
+=============================
+
+1. Song file ka naam yeh rakho (inme se koi bhi chalega):
+   - song.mp3      (recommended)
+   - music.mp3
+   - o-sanam.mp3
+   - osanam.mp3
+
+2. File yahan rakhke git push kar do:
+
+   git add .
+   git commit -m "add song"
+   git push
+
+3. Bas! Site ab MP3 khud auto-play karegi (Happy Birthday
+   synth ki jagah). Koi code change nahi karna.
+
+Note: MP3 ka size 5MB se chhota rakho taaki site fast rahe.
+(128kbps quality kaafi hai)
