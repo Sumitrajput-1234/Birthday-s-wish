@@ -11,7 +11,6 @@ t.hideturtle()
 t.pensize(1)
 
 colors = ["RED"]
-
 # Person's name
 name = "SUMIT"
 
