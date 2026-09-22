@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>For Muskan 💝</title>
+  <meta name="description" content="A little surprise for someone special..." />
+  <meta property="og:title" content="A little surprise for Muskan 💝" />
+  <meta property="og:description" content="Something made with love, just for you. Tap to open." />
+  <meta property="og:image" content="photos/photo1.jpg" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💝</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- floating hearts backdrop -->
+  <div id="hearts" aria-hidden="true"></div>
+  <!-- confetti canvas -->
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <!-- music toggle -->
+  <button id="musicToggle" class="music-toggle" title="Music on/off" aria-label="Toggle music">🎵</button>
+
+  <main id="stage">
+
+    <!-- ============ SCENE 0 : INTRO / TAP TO OPEN ============ -->
+    <section class="scene active" id="scene-intro">
+      <div class="intro-inner">
+        <p class="kicker fade-up" style="animation-delay:.2s">A little surprise for</p>
+        <h1 class="name-script fade-up" style="animation-delay:.55s">Muskan</h1>
+        <div class="gift-wrap fade-up" style="animation-delay:.9s">
+          <div class="gift" id="giftBox" role="button" tabindex="0" aria-label="Tap to open the surprise">
+            <div class="gift-lid">
+              <span class="bow bow-left"></span><span class="bow bow-right"></span>
+            </div>
+            <div class="gift-body"></div>
+            <div class="gift-heart">♥</div>
+          </div>
+        </div>
+        <p class="tap-hint fade-up" style="animation-delay:1.25s">tap the gift to open 💝</p>
+      </div>
+    </section>
+
+    <!-- ============ SCENE 1 : BALLOONS ============ -->
+    <section class="scene" id="scene-balloons">
+      <div class="scene-top">
+        <h2 class="scene-title">Pop all the balloons! 🎈</h2>
+        <p class="scene-sub" id="balloonCounter">0 / 9 popped</p>
+      </div>
+      <div id="balloonField"></div>
+    </section>
+
+    <!-- ============ SCENE 2 : CANDLE BLOW ============ -->
+    <section class="scene" id="scene-candles">
+      <div class="scene-top">
+        <h2 class="scene-title">Make a wish, Muskan 🌠</h2>
+        <p class="scene-sub">Now blow out the candles — blow into your microphone 🎤 or tap each flame</p>
+      </div>
+      <div class="cake-stage">
+        <div class="cake-wrap">
+          <div class="candles-row" id="candlesRow"></div>
+          <!-- SVG CAKE -->
+          <svg id="cakeSVG" viewBox="0 0 340 300" role="img" aria-label="A birthday cake with Muskan's name">
+            <defs>
+              <linearGradient id="tierGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ffd9e8"/>
+                <stop offset="1" stop-color="#ffb3cf"/>
+              </linearGradient>
+              <linearGradient id="topGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fff0f6"/>
+                <stop offset="1" stop-color="#ffd3e4"/>
+              </linearGradient>
+              <linearGradient id="icGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fffdf9"/>
+                <stop offset="1" stop-color="#ffeef4"/>
+              </linearGradient>
+            </defs>
+            <!-- plate -->
+            <ellipse cx="170" cy="268" rx="158" ry="26" fill="#e9e2f7"/>
+            <ellipse cx="170" cy="262" rx="158" ry="26" fill="#f6f1fc"/>
+            <!-- bottom tier -->
+            <path d="M52 258 L52 178 Q52 170 60 170 L280 170 Q288 170 288 178 L288 258 Z" fill="url(#tierGrad)"/>
+            <ellipse cx="170" cy="170" rx="118" ry="16" fill="url(#icGrad)"/>
+            <!-- drips bottom -->
+            <path d="M52 178 q6 26 14 0 q6 34 14 0 q6 22 14 0 q6 38 14 0 q6 24 14 0 q6 36 14 0 q6 22 14 0 q6 40 14 0 q6 24 14 0 q6 34 14 0 q6 22 14 0 q6 38 14 0 q6 24 14 0 q6 30 14 0 q6 22 12 0 l0 0 q0 8 -8 8 L52 186 q-8 0 -8 -8 Z" fill="url(#icGrad)" opacity="0.95"/>
+            <!-- berries on bottom tier -->
+            <circle cx="86" cy="228" r="6" fill="#ff6d8d"/>
+            <circle cx="118" cy="238" r="6" fill="#ff8fab"/>
+            <circle cx="150" cy="230" r="6" fill="#ff6d8d"/>
+            <circle cx="182" cy="240" r="6" fill="#ff8fab"/>
+            <circle cx="214" cy="230" r="6" fill="#ff6d8d"/>
+            <circle cx="246" cy="238" r="6" fill="#ff8fab"/>
+            <!-- top tier -->
+            <path d="M92 170 L92 112 Q92 104 100 104 L240 104 Q248 104 248 112 L248 170 Z" fill="url(#topGrad)"/>
+            <ellipse cx="170" cy="104" rx="78" ry="12" fill="#fffdf9"/>
+            <path d="M92 112 q5 20 12 0 q5 26 12 0 q5 18 12 0 q5 28 12 0 q5 18 12 0 q5 26 12 0 q5 18 12 0 q5 28 12 0 q5 18 12 0 q5 24 12 0 q5 18 12 0 q5 26 12 0 q5 20 12 0 q0 6 -7 6 L92 118 q-7 0 -7 -6 Z" fill="#fffdf9" opacity="0.95"/>
+            <!-- name on icing -->
+            <text x="170" y="226" text-anchor="middle" class="cake-name" font-family="'Great Vibes', cursive">Muskan</text>
+            <text x="170" y="160" text-anchor="middle" font-size="13" fill="#d76a9c" font-family="Quicksand, sans-serif" font-weight="600" letter-spacing="2">HAPPY BIRTHDAY</text>
+            <!-- cherries on top -->
+            <circle cx="140" cy="92" r="8" fill="#ff5d7d"/>
+            <circle cx="172" cy="88" r="8" fill="#ff7d9c"/>
+            <circle cx="204" cy="92" r="8" fill="#ff5d7d"/>
+            <path d="M140 84 q4 -10 10 -14 M172 80 q0 -10 3 -14 M204 84 q-4 -10 -10 -14" stroke="#5da06a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="scene-actions" id="candleActions">
+        <button class="btn btn-primary" id="micBtn">🎤 Blow with microphone</button>
+        <p class="mic-status" id="micStatus"></p>
+      </div>
+    </section>
+
+    <!-- ============ SCENE 3 : CUT CAKE ============ -->
+    <section class="scene" id="scene-cut">
+      <div class="scene-top">
+        <h2 class="scene-title">Cut the cake, birthday girl! 🎂</h2>
+        <p class="scene-sub">Your wish is already on its way ♥</p>
+      </div>
+      <div class="cake-stage cut-stage">
+        <div class="cake-wrap">
+          <div class="cake-cut" id="cakeCut">
+            <div class="cut-half left-half"><div class="cut-face"></div></div>
+            <div class="cut-slice"></div>
+            <div class="cut-half right-half"></div>
+            <div class="cut-plate"></div>
+          </div>
+          <div id="knife" class="knife" aria-hidden="true">
+            <div class="knife-blade"></div>
+            <div class="knife-handle"></div>
+          </div>
+        </div>
+      </div>
+      <div class="scene-actions">
+        <button class="btn btn-primary" id="cutBtn">🔪 Tap to cut</button>
+      </div>
+    </section>
+
+    <!-- ============ SCENE 4 : PHOTOS ============ -->
+    <section class="scene" id="scene-photos">
+      <div class="scene-top">
+        <h2 class="scene-title">A few of my favourite memories ♥</h2>
+        <p class="scene-sub">tap to keep looking</p>
+      </div>
+      <div class="photo-stage" id="photoStage">
+        <div class="photo-frame">
+          <div class="photo-img" id="photoImg"></div>
+          <div class="photo-tape tape-l"></div>
+          <div class="photo-tape tape-r"></div>
+        </div>
+        <p class="photo-caption" id="photoCaption"></p>
+        <div class="photo-dots" id="photoDots"></div>
+      </div>
+      <div class="scene-actions">
+        <button class="btn btn-primary" id="photosNext">Open your letter 💌</button>
+      </div>
+    </section>
+
+    <!-- ============ SCENE 5 : LETTER ============ -->
+    <section class="scene" id="scene-letter">
+      <div class="scene-top">
+        <h2 class="scene-title">One last thing... 💌</h2>
+      </div>
+      <div class="letter-stage">
+        <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Open the letter">
+          <div class="env-back"></div>
+          <div class="env-letter" id="envLetter">
+            <div class="letter-paper">
+              <p class="letter-greet">Dear Muskan,</p>
+              <p class="letter-body" id="letterBody"></p>
+              <p class="letter-sign">Forever yours <span class="sign-heart">♥</span></p>
+            </div>
+          </div>
+          <div class="env-flap"></div>
+          <div class="env-seal">♥</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SCENE 6 : FINALE ============ -->
+    <section class="scene" id="scene-finale">
+      <div class="finale-inner">
+        <div class="finale-emoji" id="finaleEmoji">🎂</div>
+        <h2 class="finale-title">HAPPY BIRTHDAY</h2>
+        <h1 class="finale-name">Muskan</h1>
+        <p class="finale-line">You already fulfilled all of my wishes. ♥</p>
+        <div class="finale-badges">
+          <span class="badge">🎈</span><span class="badge">🎂</span><span class="badge">💌</span><span class="badge">✨</span>
+        </div>
+        <p class="made-for">made with love, just for you</p>
+        <button class="btn btn-ghost" id="replayBtn">↺ Play again</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/audio.js"></script>
+  <script src="js/confetti.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
